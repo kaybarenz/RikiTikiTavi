@@ -2,3 +2,6 @@
 /Scripts/
 /share/
 /etc/
+config.py
+pyvenv.cfg
+.idea
