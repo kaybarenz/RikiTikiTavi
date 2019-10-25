@@ -20,8 +20,7 @@ from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
 from wiki.web import current_wiki
 from wiki.web import current_users
-from wiki.web.user import protect
-
+from wiki.web.user import protect, admin_protect
 
 bp = Blueprint('wiki', __name__)
 
@@ -160,14 +159,15 @@ def user_create():
     pass
 
 
-@bp.route('/user/<int:user_id>/')
-def user_admin(user_id):
-    pass
-
-
 @bp.route('/user/delete/<int:user_id>/')
 def user_delete(user_id):
     pass
+
+
+@bp.route('/admin/')
+@admin_protect
+def admin():
+    return render_template('admin.html')
 
 
 """
@@ -179,4 +179,3 @@ def user_delete(user_id):
 @bp.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
-

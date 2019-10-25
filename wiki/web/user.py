@@ -12,9 +12,9 @@ from flask import current_app
 from flask_login import current_user
 
 
-
 class UserManager(object):
     """A very simple user Manager, that saves it's data as json."""
+
     def __init__(self, path):
         self.file = os.path.join(path, 'users.json')
 
@@ -104,6 +104,9 @@ class User(object):
     def get_id(self):
         return self.name
 
+    def has_role(self, role):
+        return role.lower() in (r.lower() for r in self.data.get('roles'))
+
     def check_password(self, password):
         """Return True, return False, or raise NotImplementedError if the
         authentication_method is missing or unknown."""
@@ -145,4 +148,16 @@ def protect(f):
         if current_app.config.get('PRIVATE') and not current_user.is_authenticated:
             return current_app.login_manager.unauthorized()
         return f(*args, **kwargs)
+
+    return wrapper
+
+
+def admin_protect(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if current_app.config.get('PRIVATE') and \
+                (not current_user.is_authenticated or not current_user.has_role('admin')):
+            return current_app.login_manager.unauthorized()
+        return f(*args, **kwargs)
+
     return wrapper
