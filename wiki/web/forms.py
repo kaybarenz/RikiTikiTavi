@@ -2,6 +2,7 @@
     Forms
     ~~~~~
 """
+from flask_login import current_user
 from flask_wtf import Form
 from wtforms import BooleanField
 from wtforms import TextField
@@ -55,3 +56,22 @@ class LoginForm(Form):
             return
         if not user.check_password(field.data):
             raise ValidationError('Username and password do not match.')
+
+
+class ChangePasswordForm(Form):
+    old_password = PasswordField('', [InputRequired()])
+    new_password = PasswordField('', [InputRequired()])
+    confirm_password = PasswordField('', [InputRequired()])
+
+    def validate_confirm_password(form, field):
+        password = form.new_password.data
+        confirm_password = field.data
+        if password != confirm_password:
+            raise ValidationError('New password must match.')
+
+    def validate_old_password(form, field):
+        user = current_user
+        if not user:
+            return
+        if not user.check_password(field.data):
+            raise ValidationError('Your password is incorrect.')

@@ -14,7 +14,7 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
-from wiki.web.forms import EditorForm
+from wiki.web.forms import EditorForm, ChangePasswordForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
@@ -138,6 +138,17 @@ def user_login():
         flash('Login successful.', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('login.html', form=form)
+
+
+@bp.route('/user/change_password/', methods=['GET', 'POST'])
+def user_change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        current_user.set_password(form.confirm_password.data)
+        current_user.set('authenticated', True)
+        flash('Password Change Successful.', 'success')
+        return render_template('change_password.html', form=form)
+    return render_template('change_password.html', form=form)
 
 
 @bp.route('/user/logout/')

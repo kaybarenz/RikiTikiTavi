@@ -11,7 +11,7 @@
   "member": {
     "active": true,
     "authentication_method": "cleartext",
-    "password": "1234",
+    "password": "abc",
     "authenticated": false,
     "roles": []
   }

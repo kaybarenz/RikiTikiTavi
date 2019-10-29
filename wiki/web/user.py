@@ -89,6 +89,15 @@ class User(object):
         self.data[option] = value
         self.save()
 
+    def set_password(self, password):
+        authentication_method = self.data.get('authentication_method', None)
+        if authentication_method == 'hash':
+            self.data['hash'] = make_salted_hash(password)
+        elif authentication_method == 'cleartext':
+            self.data['password'] = password
+        else:
+            raise NotImplementedError(authentication_method)
+
     def save(self):
         self.manager.update(self.name, self.data)
 

@@ -35,6 +35,7 @@
                                             {% if current_user.has_role('admin') %}
                                                 <li><a href="{{ url_for('wiki.admin') }}">Admin</a></li>
                                             {% endif %}
+                                            <li><a href="{{ url_for('wiki.user_change_password') }}">Change Password</a></li>
                                             <li><a href="{{ url_for('wiki.user_logout') }}">Logout</a></li>
                                         </ul>
                                       </li>
