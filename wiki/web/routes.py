@@ -20,7 +20,7 @@ from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
 from wiki.web import current_wiki
 from wiki.web import current_users
-from wiki.web.user import protect, admin_protect
+from wiki.web.user import protect, admin_protect, UserManager
 
 bp = Blueprint('wiki', __name__)
 
@@ -178,7 +178,8 @@ def user_delete(user_id):
 @bp.route('/admin/')
 @admin_protect
 def admin():
-    return render_template('admin.html')
+    users = current_users
+    return render_template('admin.html', users=users.read())
 
 
 """
