@@ -167,7 +167,12 @@ def user_index():
 
 @bp.route('/user/create/')
 def user_create():
-    pass
+    return render_template('User/addEdit.html', create=True)
+
+
+@bp.route('/user/edit/<string:user_id>/')
+def user_edit(user_id):
+    return render_template('User/addEdit.html', create=False)
 
 
 @bp.route('/user/delete/<int:user_id>/')

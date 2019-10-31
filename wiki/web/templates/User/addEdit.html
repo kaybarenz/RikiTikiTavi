@@ -1,0 +1,20 @@
+{% extends "./base.html" %}
+
+{% block title %}
+    {% if(create) %}
+        Create a new User
+    {% else %}
+        Edit User
+    {% endif %}
+{% endblock title %}
+{% block content %}
+{#<form method="POST" class="form-inline">#}
+{#	{{ form.hidden_tag() }}#}
+{#	{{ input(form.url, placeholder="URL of the new page", autocomplete="off") }}#}
+{#	<input type="submit" class="btn btn-success" value="Create">#}
+{#</form>#}
+{% endblock content %}
+
+{% block sidebar %}
+{#<p class="alert alert-success">Thank you for creating new content!</p>#}
+{% endblock sidebar %}

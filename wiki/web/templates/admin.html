@@ -23,7 +23,7 @@
                 {{ users[user]["active"] }}
             </td>
             <td>
-                <a href="" class="btn btn-sm btn-secondary">Edit</a>
+                <a href="{{ url_for('wiki.user_edit', user_id=user) }}" class="btn btn-sm btn-secondary">Edit</a>
             </td>
         </tr>
     {% endfor %}
@@ -31,5 +31,5 @@
 {% endblock content %}
 
 {% block sidebar %}
-    <a href="#" class="btn btn-primary btn-large">New User</a>
+    <a href="{{ url_for('wiki.user_create') }}" class="btn btn-primary btn-large">New User</a>
 {% endblock sidebar %}
