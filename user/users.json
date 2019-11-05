@@ -14,5 +14,65 @@
     "password": "abc",
     "authenticated": false,
     "roles": []
+  },
+  "Samuel": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "Cho",
+    "authenticated": true,
+    "roles": [
+      "admin"
+    ]
+  },
+  "Michael": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "Winterberger",
+    "authenticated": true,
+    "roles": []
+  },
+    "TestAdmin": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "TestAdmin",
+    "authenticated": true,
+    "roles": [
+      "admin"
+    ]
+  },
+  "TestUser": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "TestUser",
+    "authenticated": false,
+    "roles": []
+  },
+    "Kayla": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "Barenz",
+    "authenticated": true,
+    "roles": []
+  },
+  "Jacob": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "Minneman",
+    "authenticated": false,
+    "roles": []
+  },
+    "Patrick": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "Voto",
+    "authenticated": true,
+    "roles": []
+  },
+  "Alexander": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "Schwiegeraht",
+    "authenticated": false,
+    "roles": []
   }
 }
