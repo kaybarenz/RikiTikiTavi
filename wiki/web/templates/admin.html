@@ -10,6 +10,7 @@
         <th>Authenticated</th>
         <th>Active</th>
         <th></th>
+        <th></th>
     </tr>
     {% for user in users %}
         <tr>
@@ -25,11 +26,16 @@
             <td>
                 <a href="{{ url_for('wiki.user_edit', user_id=user) }}" class="btn btn-sm btn-secondary">Edit</a>
             </td>
+            <td>
+                <a href="{{ url_for('wiki.user_delete', user_id=user) }}" class="text-info">X</a>
+            </td>
         </tr>
     {% endfor %}
     </table>
 {% endblock content %}
 
 {% block sidebar %}
-    <a href="{{ url_for('wiki.user_create') }}" class="btn btn-primary btn-large">New User</a>
+    <div class="text-center">
+        <a href="{{ url_for('wiki.user_create') }}" class="btn btn-primary btn-large">New User</a>
+    </div>
 {% endblock sidebar %}

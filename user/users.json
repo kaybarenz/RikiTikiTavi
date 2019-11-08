@@ -2,7 +2,7 @@
   "name": {
     "active": true,
     "authentication_method": "cleartext",
-    "password": "1234",
+    "password": "12345",
     "authenticated": true,
     "roles": [
       "admin"
@@ -14,15 +14,6 @@
     "password": "abc",
     "authenticated": false,
     "roles": []
-  },
-  "Samuel": {
-    "active": true,
-    "authentication_method": "cleartext",
-    "password": "Cho",
-    "authenticated": false,
-    "roles": [
-      "admin"
-    ]
   },
   "Michael": {
     "active": true,
@@ -39,13 +30,6 @@
     "roles": [
       "admin"
     ]
-  },
-  "TestUser": {
-    "active": true,
-    "authentication_method": "cleartext",
-    "password": "TestUser",
-    "authenticated": false,
-    "roles": []
   },
   "Kayla": {
     "active": true,
@@ -74,5 +58,14 @@
     "password": "Schwiegeraht",
     "authenticated": false,
     "roles": []
+  },
+  "Samuel": {
+    "active": true,
+    "roles": [
+      "admin"
+    ],
+    "authentication_method": "cleartext",
+    "authenticated": false,
+    "password": "Cho"
   }
 }

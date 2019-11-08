@@ -14,13 +14,13 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
-from wiki.web.forms import EditorForm, ChangePasswordForm
+from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
-from wiki.web import current_wiki
+from wiki.web import current_wiki, get_users
 from wiki.web import current_users
-from wiki.web.user import protect, admin_protect, UserManager
+from wiki.web.user import protect, admin_protect, UserManager, User
 
 bp = Blueprint('wiki', __name__)
 
@@ -160,24 +160,36 @@ def user_logout():
     return redirect(url_for('wiki.user_login'))
 
 
-@bp.route('/user/')
-def user_index():
-    pass
-
-
-@bp.route('/user/create/')
+@bp.route('/user/create/', methods=['GET', 'POST'])
 def user_create():
-    return render_template('User/addEdit.html', create=True)
+    form = UserEditorForm()
+    if form.validate_on_submit():
+        get_users().add_user(form.name.data, form.password.data, form.active.data)
+        return redirect(url_for('wiki.admin'))
+    return render_template('User/addEdit.html', form=form, create=True)
 
 
-@bp.route('/user/edit/<string:user_id>/')
+@bp.route('/user/edit/<string:user_id>/', methods=['GET', 'POST'])
 def user_edit(user_id):
-    return render_template('User/addEdit.html', create=False)
+    user_manager = get_users()
+    user = user_manager.get_user(user_id)
+    form = UserEditorForm(name=user.name, password=user.get("password"), active=user.get("active"))
+
+    if form.validate_on_submit():
+        if user.name != form.name.data:
+            temp = user_manager.add_user(form.name.data, user.data['password'], user.data['password'], user.data['roles'],  user.data['authentication_method'])
+            user_manager.delete_user(user.name)
+            user = temp
+        user.set_password(form.password.data)
+        user.set("active", form.active.data)
+        return redirect(url_for('wiki.admin'))
+    return render_template('User/addEdit.html', form=form, create=False)
 
 
-@bp.route('/user/delete/<int:user_id>/')
+@bp.route('/user/delete/<string:user_id>/')
 def user_delete(user_id):
-    pass
+    get_users().delete_user(user_id)
+    return redirect(url_for('wiki.admin'))
 
 
 @bp.route('/admin/')

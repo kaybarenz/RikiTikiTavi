@@ -8,13 +8,24 @@
     {% endif %}
 {% endblock title %}
 {% block content %}
-{#<form method="POST" class="form-inline">#}
-{#	{{ form.hidden_tag() }}#}
-{#	{{ input(form.url, placeholder="URL of the new page", autocomplete="off") }}#}
-{#	<input type="submit" class="btn btn-success" value="Create">#}
-{#</form>#}
+<form method="POST" class="form">
+    {{ form.csrf_token }}
+    <div class="form-group">
+        {{ form.name.label }}
+        {{ form.name() }}
+    </div>
+    <div class="form-group">
+        {{ form.password.label }}
+        {{ form.password() }}
+    </div>
+    <div class="form-check form-check-inline">
+        {{ form.active.label }}
+        {{ form.active() }}
+    </div>
+    <br>
+	<input type="submit" class="btn btn-success" value="Submit">
+</form>
 {% endblock content %}
 
 {% block sidebar %}
-{#<p class="alert alert-success">Thank you for creating new content!</p>#}
 {% endblock sidebar %}

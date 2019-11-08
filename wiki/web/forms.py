@@ -10,6 +10,7 @@ from wtforms import TextAreaField
 from wtforms import PasswordField
 from wtforms.validators import InputRequired
 from wtforms.validators import ValidationError
+from wtforms import StringField
 
 from wiki.core import clean_url
 from wiki.web import current_wiki
@@ -39,6 +40,12 @@ class EditorForm(Form):
     title = TextField('', [InputRequired()])
     body = TextAreaField('', [InputRequired()])
     tags = TextField('')
+
+
+class UserEditorForm(Form):
+    name = StringField("Name", [InputRequired()])
+    password = StringField("Password", [InputRequired()])
+    active = BooleanField("Active", default=False)
 
 
 class LoginForm(Form):
