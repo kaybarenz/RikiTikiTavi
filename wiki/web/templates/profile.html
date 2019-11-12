@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Page{% endblock title %}
+
+{% block content %}
+    <h1>Profile Management</h1>
+    <table class="table table-striped">
+    <tr>
+        <th>Username</th>
+        <th>Authenticated</th>
+        <th>Active</th>
+    </tr>
+        <tr>
+            <td>
+                {{ current_user.name }}
+            </td>
+            <td>
+                {{ current_user.data.get('authenticated') }}
+            </td>
+            <td>
+                {{ current_user.data.get('active') }}
+            </td>
+        </tr>
+    </table>
+{% endblock content %}
+
+{% block sidebar %}
+    <div class="text-center">
+        <a href="{{ url_for('wiki.user_change_password') }}" class="btn btn-primary btn-large">Change Password</a>
+    </div>
+{% endblock sidebar %}

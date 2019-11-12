@@ -177,7 +177,8 @@ def user_edit(user_id):
 
     if form.validate_on_submit():
         if user.name != form.name.data:
-            temp = user_manager.add_user(form.name.data, user.data['password'], user.data['password'], user.data['roles'],  user.data['authentication_method'])
+            temp = user_manager.add_user(form.name.data, user.data['password'], user.data['password'],
+                                         user.data['roles'], user.data['authentication_method'])
             user_manager.delete_user(user.name)
             user = temp
         user.set_password(form.password.data)
@@ -197,6 +198,12 @@ def user_delete(user_id):
 def admin():
     users = current_users
     return render_template('admin.html', users=users.read())
+
+
+@bp.route('/profile/')
+def profile():
+    users = current_users
+    return render_template('profile.html', users=users.read())
 
 
 """

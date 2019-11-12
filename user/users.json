@@ -19,7 +19,7 @@
     "active": true,
     "authentication_method": "cleartext",
     "password": "Winterberger",
-    "authenticated": false,
+    "authenticated": true,
     "roles": []
   },
   "TestAdmin": {
@@ -65,7 +65,7 @@
       "admin"
     ],
     "authentication_method": "cleartext",
-    "authenticated": false,
+    "authenticated": true,
     "password": "Cho"
   }
 }
