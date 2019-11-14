@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% from "helpers.html" import imageSelector %}
 
 {% block title -%}
 Wiki Editor
@@ -16,7 +15,9 @@ Wiki Editor
 			{{ form.hidden_tag() }}
 			{{ input(form.title, placeholder="Title", class="span7", autocomplete="off") }}
 
-            {{ imageSelector("body") }}
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#imageSelector">
+                Add Image
+            </button>
 			{{ input(form.body, placeholder="Markdown", class="span7", rows="20") }}
 			{{ input(form.tags, placeholder="Tags (comma separated)", class="span7", autocomplete="off") }}
 			<div class="form-actions">
@@ -31,6 +32,35 @@ Wiki Editor
 		</form>
 	</div>
 	<div class="tab-pane" id="preview"></div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="imageSelector" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title">Add Image...</h5>
+            </div>
+            <div class="modal-body">
+                <div class="gallery">
+                    {% for image in images %}
+                        <div class="mb-3 pics animation all 2">
+                            <img src="{{ url_for('static', filename=('images/'+image)) }}" class="img-fluid img-polaroid"/>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Add Selected Image</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}
 

@@ -4,7 +4,7 @@ import os
 SECRET_KEY = 'a unique and long key'
 TITLE = 'Riki'
 HISTORY_SHOW_MAX = 30
-PIC_BASE = os.getcwd() + '/static/content/'
+PIC_BASE = os.getcwd() + '/wiki/web/static/images'
 CONTENT_DIR = os.getcwd() + '/content'
 USER_DIR = os.getcwd() + '/user'
 NUMBER_OF_HISTORY = 5

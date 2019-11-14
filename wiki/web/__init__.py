@@ -28,6 +28,9 @@ def get_users():
 
 current_users = LocalProxy(get_users)
 
+def get_pictures():
+    images = os.listdir(current_app.config['PIC_BASE'])
+    return images
 
 def create_app(directory):
     app = Flask(__name__)

@@ -18,7 +18,7 @@ from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
-from wiki.web import current_wiki, get_users
+from wiki.web import current_wiki, get_users, get_pictures
 from wiki.web import current_users
 from wiki.web.user import protect, admin_protect, UserManager, User
 
@@ -63,6 +63,7 @@ def create():
 def edit(url):
     page = current_wiki.get(url)
     form = EditorForm(obj=page)
+    images = get_pictures()
     if form.validate_on_submit():
         if not page:
             page = current_wiki.get_bare(url)
@@ -70,7 +71,7 @@ def edit(url):
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
         return redirect(url_for('wiki.display', url=url))
-    return render_template('editor.html', form=form, page=page)
+    return render_template('editor.html', form=form, page=page, images=images)
 
 
 @bp.route('/preview/', methods=['POST'])
@@ -204,7 +205,6 @@ def admin():
 def profile():
     users = current_users
     return render_template('profile.html', users=users.read())
-
 
 """
     Error Handlers
