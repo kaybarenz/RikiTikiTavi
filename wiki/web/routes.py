@@ -2,7 +2,9 @@
     Routes
     ~~~~~~
 """
-from flask import Blueprint
+import os
+
+from flask import Blueprint, current_app, Response, jsonify
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -12,13 +14,14 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
+from werkzeug.utils import secure_filename
 
 from wiki.core import Processor
 from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
-from wiki.web import current_wiki, get_users
+from wiki.web import current_wiki, get_users, get_pictures
 from wiki.web import current_users
 from wiki.web.user import protect, admin_protect, UserManager, User
 
@@ -63,6 +66,7 @@ def create():
 def edit(url):
     page = current_wiki.get(url)
     form = EditorForm(obj=page)
+    images = get_pictures()
     if form.validate_on_submit():
         if not page:
             page = current_wiki.get_bare(url)
@@ -70,7 +74,7 @@ def edit(url):
         page.save()
         flash('"%s" was saved.' % page.title, 'success')
         return redirect(url_for('wiki.display', url=url))
-    return render_template('editor.html', form=form, page=page)
+    return render_template('editor.html', form=form, page=page, images=images)
 
 
 @bp.route('/preview/', methods=['POST'])
@@ -202,6 +206,19 @@ def admin():
 def profile():
     users = current_users
     return render_template('profile.html', users=users.read())
+
+
+@bp.route('/pictures/', methods=['POST'])
+def pictures():
+    if request.method == "POST":
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        if file:
+            file.save(os.path.join(current_app.config['PIC_BASE'], filename))
+
+        resp = jsonify({'message': 'success', 'filename': filename})
+        resp.status_code = 201
+        return resp
 
 
 """
