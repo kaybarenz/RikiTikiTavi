@@ -47,7 +47,7 @@ Wiki Editor
                 <h5 class="modal-title">Add Image...</h5>
             </div>
             <div class="modal-body">
-                <div class="gallery">
+                <div class="gallery img-selector">
                     {% for image in images %}
                         <div class="mb-3 pics animation all 2">
                             <img src="{{ url_for('static', filename=('images/'+image)) }}" class="img-fluid img-polaroid"/>
@@ -57,7 +57,7 @@ Wiki Editor
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Add Selected Image</button>
+                <button type="button" class="btn btn-primary" id="btn-add-image" disabled>Add Selected Image</button>
             </div>
         </div>
     </div>
@@ -117,5 +117,19 @@ $('#previewlink').on('click', function() {
 $('#previewbtn').on('click', function(event) {
 	event.preventDefault();
 	$('#previewlink').click();
+});
+
+
+$(".img-selector img").click(function() {
+    $(".img-selector img").removeClass("selected");
+    $(this).addClass("selected");
+    $("#btn-add-image").prop('disabled', false);
+});
+
+$("#btn-add-image").click(function() {
+    var selected = $(".img-selector img.selected");
+    var src = selected.attr('src');
+    $('#body').append('![Image](' + src + ')');
+    $('#imageSelector').modal('hide');
 });
 {%- endblock postscripts %}
