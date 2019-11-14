@@ -159,11 +159,13 @@ $("#btn-upload-image1").click(function() {
     }
 
     function addImageAndClose(e) {
-    debugger;
         var response = JSON.parse(e.target.response);
         var filename = response.filename;
         if (filename != "") {
-            $('textarea#body').append('![Image]({{ url_for('static', filename=('images/')) }}'+ filename +')');
+            var str = '![Image]({{ url_for('static', filename=('images/')) }}'+ filename +')';
+            $('textarea#body').val(function(i, text) {
+                return text + str;
+            });
             closeWindow();
         }
         else {
