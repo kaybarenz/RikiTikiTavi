@@ -15,19 +15,19 @@
     {% for user in users %}
         <tr>
             <td>
-                {{ user }}
+                {{ user.get("name") }}
             </td>
             <td>
-                {{ users[user]["authenticated"]  }}
+                {{ user.get("authenticated")  }}
             </td>
             <td>
-                {{ users[user]["active"] }}
+                {{ user.get("active") }}
             </td>
             <td>
-                <a href="{{ url_for('wiki.user_edit', user_id=user) }}" class="btn btn-sm btn-secondary">Edit</a>
+                <a href="{{ url_for('wiki.user_edit', user_id=user.id) }}" class="btn btn-sm btn-secondary">Edit</a>
             </td>
             <td>
-                <a href="{{ url_for('wiki.user_delete', user_id=user) }}" class="text-info">X</a>
+                <a href="{{ url_for('wiki.user_delete', user_id=user.id) }}" class="text-info">X</a>
             </td>
         </tr>
     {% endfor %}

@@ -12,7 +12,7 @@
     </tr>
         <tr>
             <td>
-                {{ current_user.name }}
+                {{ current_user.get("name") }}
             </td>
             <td>
                 {{ current_user.data.get('authenticated') }}

@@ -132,7 +132,7 @@ def search():
 def user_login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.name.data)
+        user = current_users.login_user(form.name.data, form.password.data)
         login_user(user)
         user.set('authenticated', True)
         flash('Login successful.', 'success')
@@ -164,25 +164,23 @@ def user_logout():
 def user_create():
     form = UserEditorForm()
     if form.validate_on_submit():
-        get_users().add_user(form.name.data, form.password.data, form.active.data)
+        current_users.add_user(form.name.data, form.password.data, form.active.data)
         return redirect(url_for('wiki.admin'))
     return render_template('User/addEdit.html', form=form, create=True)
 
 
-@bp.route('/user/edit/<string:user_id>/', methods=['GET', 'POST'])
+@bp.route('/user/edit/<int:user_id>/', methods=['GET', 'POST'])
 def user_edit(user_id):
     user_manager = get_users()
     user = user_manager.get_user(user_id)
-    form = UserEditorForm(name=user.name, password=user.get("password"), active=user.get("active"))
+    form = UserEditorForm(name=user.get("name"), password=user.get("password"), active=user.get("active"))
 
     if form.validate_on_submit():
-        if user.name != form.name.data:
-            temp = user_manager.add_user(form.name.data, user.data['password'], user.data['password'],
-                                         user.data['roles'], user.data['authentication_method'])
-            user_manager.delete_user(user.name)
-            user = temp
-        user.set_password(form.password.data)
+        user.set("name", form.name.data)
+        user.set("password", form.password.data)
         user.set("active", form.active.data)
+        user.save()
+
         return redirect(url_for('wiki.admin'))
     return render_template('User/addEdit.html', form=form, create=False)
 

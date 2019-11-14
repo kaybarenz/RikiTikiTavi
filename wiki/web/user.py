@@ -11,75 +11,58 @@ from functools import wraps
 from flask import current_app
 from flask_login import current_user
 
+from users.users import Users
+
 
 class UserManager(object):
     """A very simple user Manager, that saves it's data as json."""
 
-    def __init__(self, path):
-        self.file = os.path.join(path, 'users.json')
+    def __init__(self):
+        self.database = Users()
 
     def read(self):
-        if not os.path.exists(self.file):
-            return {}
-        with open(self.file) as f:
-            data = json.loads(f.read())
-        return data
+        return self.get_all_users()
 
-    def write(self, data):
-        with open(self.file, 'w') as f:
-            f.write(json.dumps(data, indent=2))
+    def get_all_users(self):
+        return self.database.get_all_users()
+
+    # def write(self, data):
+    #     with open(self.file, 'w') as f:
+    #         f.write(json.dumps(data, indent=2))
+
+    def login_user(self, username, password):
+        return self.database.login_user(username, password)
 
     def add_user(self, name, password,
-                 active=True, roles=[], authentication_method=None):
-        users = self.read()
-        if users.get(name):
-            return False
-        if authentication_method is None:
-            authentication_method = get_default_authentication_method()
-        new_user = {
+                 active=True, roles=[], authentication_method='cleartext'):
+        if authentication_method == 'hash':
+            password = make_salted_hash(password)
+        else:
+            password = password
+
+        data = {
+            'name': name,
+            'password': password,
             'active': active,
-            'roles': roles,
             'authentication_method': authentication_method,
             'authenticated': False
         }
-        # Currently we have only two authentication_methods: cleartext and
-        # hash. If we get more authentication_methods, we will need to go to a
-        # strategy object pattern that operates on User.data.
-        if authentication_method == 'hash':
-            new_user['hash'] = make_salted_hash(password)
-        elif authentication_method == 'cleartext':
-            new_user['password'] = password
-        else:
-            raise NotImplementedError(authentication_method)
-        users[name] = new_user
-        self.write(users)
-        userdata = users.get(name)
-        return User(self, name, userdata)
+        return self.database.save_user(User(self, 0, data))
 
-    def get_user(self, name):
-        users = self.read()
-        userdata = users.get(name)
-        if not userdata:
-            return None
-        return User(self, name, userdata)
+    def get_user(self, user_id):
+        return self.database.get_user(user_id)
 
-    def delete_user(self, name):
-        users = self.read()
-        if not users.pop(name, False):
-            return False
-        self.write(users)
-        return True
+    def delete_user(self, user_id):
+        return self.database.remove_user(user_id)
 
-    def update(self, name, userdata):
-        data = self.read()
-        data[name] = userdata
-        self.write(data)
+    def update(self, user_id, userdata):
+        return self.database.save(User(self, user_id, userdata))
 
 
 class User(object):
-    def __init__(self, manager, name, data):
+    def __init__(self, manager, user_id, data):
         self.manager = manager
-        self.name = name
+        self.id = user_id
         self.data = data
 
     def get(self, option):
@@ -87,19 +70,16 @@ class User(object):
 
     def set(self, option, value):
         self.data[option] = value
-        self.save()
 
     def set_password(self, password):
-        authentication_method = self.data.get('authentication_method', None)
-        if authentication_method == 'hash':
-            self.data['hash'] = make_salted_hash(password)
-        elif authentication_method == 'cleartext':
-            self.data['password'] = password
+        if self.get('authentication_method') == 'hash':
+            self.set('password', make_salted_hash(password))
         else:
-            raise NotImplementedError(authentication_method)
+            self.set('password', password)
+        self.save()
 
     def save(self):
-        self.manager.update(self.name, self.data)
+        self.manager.save_user(self)
 
     def is_authenticated(self):
         return self.data.get('authenticated')
@@ -111,7 +91,7 @@ class User(object):
         return False
 
     def get_id(self):
-        return self.name
+        return self.id
 
     def has_role(self, role):
         return role.lower() in (r.lower() for r in self.data.get('roles'))
