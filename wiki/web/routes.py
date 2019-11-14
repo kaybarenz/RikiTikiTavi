@@ -2,7 +2,9 @@
     Routes
     ~~~~~~
 """
-from flask import Blueprint
+import os
+
+from flask import Blueprint, current_app, Response, jsonify
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -12,6 +14,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
+from werkzeug.utils import secure_filename
 
 from wiki.core import Processor
 from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm
@@ -205,6 +208,20 @@ def admin():
 def profile():
     users = current_users
     return render_template('profile.html', users=users.read())
+
+
+@bp.route('/pictures/', methods=['POST'])
+def pictures():
+    if request.method == "POST":
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        if file:
+            file.save(os.path.join(current_app.config['PIC_BASE'], filename))
+
+        resp = jsonify({'message': 'success', 'filename': filename})
+        resp.status_code = 201
+        return resp
+
 
 """
     Error Handlers

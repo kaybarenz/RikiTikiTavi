@@ -15,7 +15,7 @@ Wiki Editor
 			{{ form.hidden_tag() }}
 			{{ input(form.title, placeholder="Title", class="span7", autocomplete="off") }}
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#imageSelector">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-img-selector1">
                 Add Image
             </button>
 			{{ input(form.body, placeholder="Markdown", class="span7", rows="20") }}
@@ -36,7 +36,7 @@ Wiki Editor
 
 
 <!-- Modal -->
-<div class="modal fade" id="imageSelector" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="modal-img-selector1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -45,9 +45,16 @@ Wiki Editor
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h5 class="modal-title">Add Image...</h5>
+            <ul class="nav nav-tabs">
+                <li class="active" data-display=".tab-uploader"><a href="#">Upload Image</a></li>
+                <li data-display=".tab-img-selector"><a href="#">Gallery</a></li>
+            </ul>
             </div>
-            <div class="modal-body">
-                <div class="gallery img-selector">
+            <div class="modal-body" style="max-height:350px">
+                <div class="tab-display tab-uploader">
+                    <input type="file" id="img-uploader1" accept="image/png, image/jpeg, image/gif">
+                </div>
+                <div class="gallery img-selector hide tab-display tab-img-selector">
                     {% for image in images %}
                         <div class="mb-3 pics animation all 2">
                             <img src="{{ url_for('static', filename=('images/'+image)) }}" class="img-fluid img-polaroid"/>
@@ -56,8 +63,12 @@ Wiki Editor
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="btn-add-image" disabled>Add Selected Image</button>
+                <div id="img-upload-error" class="alert alert-danger pull-left hide" role="alert">
+                  Something went wrong, try again later!
+                </div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeWindow()">Cancel</button>
+                <button type="button" class="btn btn-primary tab-display tab-uploader" id="btn-upload-image1" disabled>Upload Image</button>
+                <button type="button" class="btn btn-primary tab-display tab-img-selector hide" id="btn-add-image1" disabled>Add Selected Image</button>
             </div>
         </div>
     </div>
@@ -119,17 +130,66 @@ $('#previewbtn').on('click', function(event) {
 	$('#previewlink').click();
 });
 
+$(".nav-tabs li").click(function() {
+    $(".nav-tabs li").removeClass("active");
+    $(".tab-display").hide();
+
+    $(this).addClass("active");
+    var s = $(this).data("display");
+    $(s).show();
+})
+
+$("#img-uploader1").change(function() {
+    $("#btn-upload-image1").prop('disabled', false);
+});
+
+$("#btn-upload-image1").click(function() {
+    var fileInput = document.getElementById('img-uploader1');
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{{ url_for('wiki.pictures') }}', true);
+    xhr.send(formData);
+    xhr.addEventListener("load", addImageAndClose);
+    xhr.addEventListener("error", displayError);
+
+    function displayError(e) {
+        $("#img-upload-error").show();
+    }
+
+    function addImageAndClose(e) {
+    debugger;
+        var response = JSON.parse(e.target.response);
+        var filename = response.filename;
+        if (filename != "") {
+            $('textarea#body').append('![Image]({{ url_for('static', filename=('images/')) }}'+ filename +')');
+            closeWindow();
+        }
+        else {
+            displayError();
+        }
+    }
+
+});
+
+function closeWindow() {
+    $('#modal-img-selector1').modal('hide');
+    $("#img-upload-error").hide();
+    $("#img-uploader1").val('');
+    $(".img-selector img").removeClass("selected");
+}
 
 $(".img-selector img").click(function() {
     $(".img-selector img").removeClass("selected");
     $(this).addClass("selected");
-    $("#btn-add-image").prop('disabled', false);
+    $("#btn-add-image1").prop('disabled', false);
 });
 
-$("#btn-add-image").click(function() {
+$("#btn-add-image1").click(function() {
     var selected = $(".img-selector img.selected");
     var src = selected.attr('src');
     $('#body').append('![Image](' + src + ')');
-    $('#imageSelector').modal('hide');
+    closeWindow();
 });
 {%- endblock postscripts %}
