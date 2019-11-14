@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "helpers.html" import imageSelector %}
 
 {% block title -%}
 Wiki Editor
@@ -14,6 +15,8 @@ Wiki Editor
 		<form method="post" class="form">
 			{{ form.hidden_tag() }}
 			{{ input(form.title, placeholder="Title", class="span7", autocomplete="off") }}
+
+            {{ imageSelector("body") }}
 			{{ input(form.body, placeholder="Markdown", class="span7", rows="20") }}
 			{{ input(form.tags, placeholder="Tags (comma separated)", class="span7", autocomplete="off") }}
 			<div class="form-actions">
