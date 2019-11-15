@@ -61,15 +61,16 @@ class Users(object):
         cursor.execute("SELECT * FROM users where userID = %s", (user_id,))
 
         row = cursor.fetchone()
-        data = {
-            'name': row[1],
-            'authentication_method': row[2],
-            'password': row[3],
-            'active': row[4],
-            'authenticated': row[5],
-            'roles': self.get_roles(row[0])
-        }
-        return wiki.web.user.User(self, user_id, data)
+        if row:
+            data = {
+                'name': row[1],
+                'authentication_method': row[2],
+                'password': row[3],
+                'active': row[4],
+                'authenticated': row[5],
+                'roles': self.get_roles(row[0])
+            }
+            return wiki.web.user.User(self, user_id, data)
 
     def save_user(self, user):
         """Creates or updates user from the database"""

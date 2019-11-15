@@ -213,8 +213,24 @@ def pictures():
     if request.method == "POST":
         file = request.files['file']
         filename = secure_filename(file.filename)
+        path = os.path.join(current_app.config['PIC_BASE'], filename)
+
+        if os.path.exists(os.path.join(current_app.config['PIC_BASE'], filename)):
+            count = 1
+            new_name = filename
+            while os.path.exists(os.path.join(current_app.config['PIC_BASE'], new_name)):
+                split_name = filename.rsplit('.', 1)
+                name = split_name[0] + str(count)
+                extension = split_name[1]
+                new_name = name + '.' + extension
+                count += 1
+            filename = new_name
+
         if file:
             file.save(os.path.join(current_app.config['PIC_BASE'], filename))
+        else:
+            resp = jsonify({'message': 'Error in file'})
+            resp.status_code = 400
 
         resp = jsonify({'message': 'success', 'filename': filename})
         resp.status_code = 201
