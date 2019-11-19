@@ -4,6 +4,7 @@
 """
 import os
 
+import flask
 from flask import Blueprint, current_app, Response, jsonify, make_response
 from flask import flash
 from flask import redirect
@@ -253,7 +254,8 @@ def export(url):
     if request.method == 'POST':
         if request.form['submit_button'] == 'PDF':
             html = page.html
-            rendered = render_template('pdf_page_template.html', page=page)
+            base_url = flask.request.host_url
+            rendered = render_template('pdf_page_template.html', page=page, base_url=base_url)
             pdf = pdfkit.from_string(rendered, False)
 
             response = make_response(pdf)
@@ -265,6 +267,7 @@ def export(url):
             pass
 
     return render_template('export.html', form=form, page=page)
+
 
 """
     Error Handlers
