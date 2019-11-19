@@ -15,9 +15,10 @@ Wiki Editor
 			{{ form.hidden_tag() }}
 			{{ input(form.title, placeholder="Title", class="span7", autocomplete="off") }}
 
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-img-selector1">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-img-selector1" onclick="loadPictures()">
                 Add Image
             </button>
+
 			{{ input(form.body, placeholder="Markdown", class="span7", rows="20") }}
 			{{ input(form.tags, placeholder="Tags (comma separated)", class="span7", autocomplete="off") }}
 			<div class="form-actions">
@@ -54,13 +55,7 @@ Wiki Editor
                 <div class="tab-display tab-uploader">
                     <input type="file" id="img-uploader1" accept="image/png, image/jpeg, image/gif">
                 </div>
-                <div class="gallery img-selector hide tab-display tab-img-selector">
-                    {% for image in images %}
-                        <div class="mb-3 pics animation all 2">
-                            <img src="{{ url_for('static', filename=('images/'+image)) }}" class="img-fluid img-polaroid"/>
-                        </div>
-                    {% endfor %}
-                </div>
+                <div id="pictures-placeholder" class="tab-display tab-img-selector hide"></div>
             </div>
             <div class="modal-footer">
                 <div id="img-upload-error" class="alert alert-danger pull-left hide" role="alert">
@@ -143,13 +138,20 @@ $("#img-uploader1").change(function() {
     $("#btn-upload-image1").prop('disabled', false);
 });
 
+$("#btn-add-image1").click(function() {
+    var selected = $(".img-selector img.selected");
+    var src = selected.attr('src');
+    appendPicture(src);
+    closeWindow();
+});
+
 $("#btn-upload-image1").click(function() {
     var fileInput = document.getElementById('img-uploader1');
         var file = fileInput.files[0];
         var formData = new FormData();
         formData.append('file', file);
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '{{ url_for('wiki.pictures') }}', true);
+    xhr.open('POST', '{{ url_for('wiki.ajax_pictures') }}', true);
     xhr.send(formData);
     xhr.addEventListener("load", addImageAndClose);
     xhr.addEventListener("error", displayError);
@@ -162,10 +164,8 @@ $("#btn-upload-image1").click(function() {
         var response = JSON.parse(e.target.response);
         var filename = response.filename;
         if (filename != "") {
-            var str = '![Image]({{ url_for('static', filename=('images/')) }}'+ filename +')';
-            $('textarea#body').val(function(i, text) {
-                return text + str;
-            });
+            var src = '{{ url_for('static', filename=('images/')) }}'+ filename;
+            appendPicture(src);
             closeWindow();
         }
         else {
@@ -175,23 +175,34 @@ $("#btn-upload-image1").click(function() {
 
 });
 
+function loadPictures() {
+    //add loading icon
+    var imgSrc = "{{ url_for('static', filename=('ajax-loader.gif')) }}";
+    var img = '<img src="'+imgSrc+'" />';
+    $("#pictures-placeholder").html(img);
+
+    //ajax load in pictures
+    $.get("{{ url_for('wiki.ajax_pictures') }}", function(data) {
+        $("#pictures-placeholder").html(data);
+        $("#pictures-placeholder img").click(function() {
+            $(".img-selector img").removeClass("selected");
+            $(this).addClass("selected");
+            $("#btn-add-image1").prop('disabled', false);
+        });
+    });
+}
+
+function appendPicture(src) {
+    var str = '![Image]('+ src + ')';
+    $('textarea#body').val(function(i, text) {
+        return text + str;
+    });
+}
+
 function closeWindow() {
     $('#modal-img-selector1').modal('hide');
     $("#img-upload-error").hide();
     $("#img-uploader1").val('');
     $(".img-selector img").removeClass("selected");
 }
-
-$(".img-selector img").click(function() {
-    $(".img-selector img").removeClass("selected");
-    $(this).addClass("selected");
-    $("#btn-add-image1").prop('disabled', false);
-});
-
-$("#btn-add-image1").click(function() {
-    var selected = $(".img-selector img.selected");
-    var src = selected.attr('src');
-    $('#body').append('![Image](' + src + ')');
-    closeWindow();
-});
 {%- endblock postscripts %}
