@@ -25,7 +25,8 @@ from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
 from wiki.web import current_wiki, get_users, get_pictures
 from wiki.web import current_users
-from wiki.web.user import protect, admin_protect, UserManager, User
+from wiki.web.user import protect, admin_protect
+from users import UserManager, User
 
 bp = Blueprint('wiki', __name__)
 

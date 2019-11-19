@@ -3,7 +3,7 @@
     ~~~~~~~~~~~~~~~~~~~~~~
 """
 
-
+from users.user import User
 import mysql.connector
 import wiki
 
@@ -51,7 +51,7 @@ class Users(object):
                 'authenticated': row[5],
                 'roles': self.get_roles(row[0])
             }
-            user_list.append(wiki.web.user.User(self, row[0], data))
+            user_list.append(User(self, row[0], data))
 
         return user_list
 
@@ -70,7 +70,7 @@ class Users(object):
                 'authenticated': row[5],
                 'roles': self.get_roles(row[0])
             }
-            return wiki.web.user.User(self, user_id, data)
+            return User(self, user_id, data)
 
     def save_user(self, user):
         """Creates or updates user from the database"""
