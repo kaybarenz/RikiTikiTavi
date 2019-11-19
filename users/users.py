@@ -96,6 +96,9 @@ class Users(object):
 
     def remove_user(self, user_id):
         """Removes User from database"""
+        cursor = self.connection.cursor()
+        cursor.execute("DELETE FROM users WHERE userID = %s", (user_id,))
+        self.connection.commit()
 
     def get_roles(self, user_id):
         cursor = self.connection.cursor()
