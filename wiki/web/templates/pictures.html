@@ -1,0 +1,7 @@
+<div class="gallery img-selector">
+    {% for image in images %}
+        <div class="mb-3 pics animation all 2">
+            <img src="{{ url_for('static', filename=('images/'+image), _external=True) }}" class="img-fluid img-polaroid"/>
+        </div>
+    {% endfor %}
+</div>

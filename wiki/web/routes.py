@@ -209,13 +209,19 @@ def profile():
     return render_template('profile.html', users=users.read())
 
 
-@bp.route('/pictures/', methods=['POST'])
-def pictures():
-    if request.method == "POST":
+@bp.route('/ajax/pictures/', methods=['POST', 'GET'])
+def ajax_pictures():
+    if request.method == "GET":
+        images = get_pictures()
+        return render_template('pictures.html', images=images)
+    elif request.method == "POST":
         file = request.files['file']
         filename = secure_filename(file.filename)
         path = os.path.join(current_app.config['PIC_BASE'], filename)
 
+        # if the filename already exists, come up with a new filename
+        # that is the old filename with a number added to the end
+        # ex: if pic.gif already exists, then save as pic1.gif
         if os.path.exists(os.path.join(current_app.config['PIC_BASE'], filename)):
             count = 1
             new_name = filename
