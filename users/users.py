@@ -99,6 +99,7 @@ class Users(object):
         cursor = self.connection.cursor()
         cursor.execute("DELETE FROM users WHERE userID = %s", (user_id,))
         self.connection.commit()
+        return True
 
     def get_roles(self, user_id):
         cursor = self.connection.cursor()
