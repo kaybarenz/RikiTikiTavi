@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page.title }}</title>
+
+    <h1>Riki Wiki - {{ page.title }}</h1>
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>{{ page }}</p>
+  </body>
+  <br>
+  <br>
+  <div class="footer">
+    {% block footer %}
+        <p>Tags: {{ page.tags }}</p>
+      {% endblock %}
+  </div>
+</html>

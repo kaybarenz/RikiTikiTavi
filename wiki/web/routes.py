@@ -4,7 +4,7 @@
 """
 import os
 
-from flask import Blueprint, current_app, Response, jsonify
+from flask import Blueprint, current_app, Response, jsonify, make_response
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -15,6 +15,7 @@ from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
 from werkzeug.utils import secure_filename
+import pdfkit
 
 from wiki.core import Processor
 from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm
@@ -242,6 +243,28 @@ def ajax_pictures():
         resp.status_code = 201
         return resp
 
+
+@bp.route('/export/<path:url>/', methods=['GET', 'POST'])
+@protect
+def export(url):
+    page = current_wiki.get_or_404(url)
+
+    form = URLForm(obj=page)
+    if request.method == 'POST':
+        if request.form['submit_button'] == 'PDF':
+            html = page.html
+            rendered = render_template('pdf_page_template.html', page=page)
+            pdf = pdfkit.from_string(rendered, False)
+
+            response = make_response(pdf)
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = 'inline; filename={}.pdf'.format('Test')
+
+            return response
+        else:
+            pass
+
+    return render_template('export.html', form=form, page=page)
 
 """
     Error Handlers
