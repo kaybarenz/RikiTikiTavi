@@ -7,9 +7,10 @@ from io import open
 import os
 import re
 
-from flask import abort
+from flask import abort, request, render_template, make_response
 from flask import url_for
 import markdown
+import pdfkit
 
 
 def clean_url(url):

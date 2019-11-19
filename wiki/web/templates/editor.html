@@ -57,7 +57,7 @@ Wiki Editor
                 <div class="gallery img-selector hide tab-display tab-img-selector">
                     {% for image in images %}
                         <div class="mb-3 pics animation all 2">
-                            <img src="{{ url_for('static', filename=('images/'+image)) }}" class="img-fluid img-polaroid"/>
+                            <img src="{{ url_for('static', filename=('images/'+image), _external=True) }}" class="img-fluid img-polaroid"/>
                         </div>
                     {% endfor %}
                 </div>
@@ -162,7 +162,7 @@ $("#btn-upload-image1").click(function() {
         var response = JSON.parse(e.target.response);
         var filename = response.filename;
         if (filename != "") {
-            var str = '![Image]({{ url_for('static', filename=('images/')) }}'+ filename +')';
+            var str = '![Image]({{ url_for('static', filename=('images/'), _external=True) }}'+ filename +')';
             $('textarea#body').val(function(i, text) {
                 return text + str;
             });
