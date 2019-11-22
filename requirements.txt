@@ -1,3 +1,4 @@
+pytest
 mysql-connector-python==8.0.18
 alembic==1.1.0
 aniso8601==8.0.0
