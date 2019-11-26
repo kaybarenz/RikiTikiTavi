@@ -2,7 +2,6 @@
     Connection to a User database
     ~~~~~~~~~~~~~~~~~~~~~~
 """
-
 from users.user import User
 import mysql.connector
 import wiki
@@ -87,8 +86,8 @@ class Users(object):
             cursor.execute(
                 """UPDATE users SET name=%s, authentication_method=%s, password=%s, active=%s, 
                 authenticated=%s WHERE userID=%s""", (
-                           user.get('name'), user.get('authentication_method'), user.get('password'),
-                           user.get('active'), user.get('authenticated'), user.id))
+                    user.get('name'), user.get('authentication_method'), user.get('password'),
+                    user.get('active'), user.get('authenticated'), user.id))
             saved_user = user
 
         self.connection.commit()
@@ -101,6 +100,19 @@ class Users(object):
         self.connection.commit()
         return True
 
+    @staticmethod
+    def remove_user_by_email(emailAddress):
+        connection = Users.get_connection()
+
+        register_cursor = connection.cursor(dictionary=True)
+        test = register_cursor.execute("SELECT userID FROM users WHERE emailAddress = %(emailAddress)s", {"emailAddress": emailAddress})
+        row = register_cursor.fetchone()
+
+        not_static = Users()
+
+        if row is not None and row["userID"] > 0:
+            Users.remove_user(not_static, row["userID"])
+
     def get_roles(self, user_id):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM users_roles WHERE userID = %s", (user_id,))
@@ -110,3 +122,47 @@ class Users(object):
             cursor.execute("SELECT * FROM roles WHERE roleID = %s", (result[2],))
             roles.append(cursor.fetchone()[1])
         return roles
+
+    @staticmethod
+    def get_connection():
+        connection = mysql.connector.connect(
+            user="z4SjDxXsv4",
+            password="e6aHYGNvQw",
+            host="remotemysql.com",
+            database="z4SjDxXsv4"
+        )
+        return connection
+
+    @staticmethod
+    def email_used(emailAddress):
+        connection = Users.get_connection()
+
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT COUNT(*) AS numFound FROM users WHERE emailAddress = %(emailAddress)s", {'emailAddress': emailAddress})
+
+        row = cursor.fetchone()
+
+        result = False
+
+        if row is not None and row["numFound"] > 0:
+            result = True
+
+        cursor.close()
+        connection.close()
+        return result
+
+    @staticmethod
+    def register_user(name, password, email_address):
+        connection = Users.get_connection()
+
+        register_cursor = connection.cursor()
+        register_cursor.execute(("INSERT INTO users "
+                                 "(userID, name, authentication_method, password, active, authenticated, emailAddress) "
+                                 "VALUES (%s, %s, %s, %s, %s, %s, %s)"),
+                                [register_cursor.lastrowid, name,
+                                 "cleartext", password, 0, 0,
+                                 email_address])
+        connection.commit()
+        register_cursor.close()
+        connection.close()
+        return True

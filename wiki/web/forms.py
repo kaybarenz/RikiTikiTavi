@@ -8,13 +8,13 @@ from wtforms import BooleanField
 from wtforms import TextField
 from wtforms import TextAreaField
 from wtforms import PasswordField
+from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired
 from wtforms.validators import ValidationError
 from wtforms import StringField
 
 from wiki.core import clean_url
 from wiki.web import current_wiki
-from wiki.web import current_users
 
 
 class URLForm(Form):
@@ -51,6 +51,19 @@ class UserEditorForm(Form):
 class LoginForm(Form):
     name = TextField('', [InputRequired()])
     password = PasswordField('', [InputRequired()])
+
+
+class RegisterForm(Form):
+    name = StringField('', [InputRequired()])
+    email = EmailField('', [InputRequired()])
+    password = PasswordField('', [InputRequired()])
+    confirm_password = PasswordField('', [InputRequired()])
+
+    def validate_confirm_password(self, field):
+        password = self.password.data
+        confirm_password = field.data
+        if password != confirm_password:
+            raise ValidationError('Password fields do not match!')
 
 
 class ChangePasswordForm(Form):

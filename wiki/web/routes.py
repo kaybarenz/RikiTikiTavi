@@ -19,14 +19,14 @@ from werkzeug.utils import secure_filename
 import pdfkit
 
 from wiki.core import Processor
-from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm
+from wiki.web.forms import EditorForm, ChangePasswordForm, UserEditorForm, RegisterForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
 from wiki.web import current_wiki, get_users, get_pictures
 from wiki.web import current_users
 from wiki.web.user import protect, admin_protect
-from users import UserManager, User
+from users import UserManager, User, Users
 
 bp = Blueprint('wiki', __name__)
 
@@ -145,6 +145,28 @@ def user_login():
         flash('Login successful.', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('login.html', form=form)
+
+
+@bp.route('/user/register/', methods=['GET', 'POST'])
+def user_register():
+    register_form = RegisterForm()
+    if register_form.validate_on_submit():
+        email_address = register_form.email.data
+        # check database for same email
+        email_exist = Users.email_used(email_address)
+        if email_exist is True:
+            flash('That email is already in use. Use another one', 'fail')
+            return render_template('register.html', form=register_form)
+
+        if email_exist is False:
+            # add user to database
+            Users.register_user(register_form.name.data,
+                                register_form.password.data,
+                                email_address)
+            flash('Account Registration was a success', 'success')
+            return render_template('login.html', form=register_form)
+
+    return render_template('register.html', form=register_form)
 
 
 @bp.route('/user/change_password/', methods=['GET', 'POST'])

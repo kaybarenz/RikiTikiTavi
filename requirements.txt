@@ -1,3 +1,4 @@
+mysql
 pytest
 mysql-connector-python==8.0.18
 alembic==1.1.0
