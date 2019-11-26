@@ -198,6 +198,12 @@ def user_delete(user_id):
     return redirect(url_for('wiki.admin'))
 
 
+@bp.route('/user/delete/<string:user_id>/')
+def user_self_delete(user_id):
+    get_users().delete_user(user_id)
+    return redirect(url_for('wiki.login'))
+
+
 @bp.route('/admin/')
 @admin_protect
 def admin():

@@ -27,5 +27,6 @@
 {% block sidebar %}
     <div class="text-center">
         <a href="{{ url_for('wiki.user_change_password') }}" class="btn btn-primary btn-large">Change Password</a>
+        <a href="{{ url_for('wiki.user_self_delete', user_id=current_user) }}" class="btn btn-primary btn-large">Delete Account</a>
     </div>
 {% endblock sidebar %}
